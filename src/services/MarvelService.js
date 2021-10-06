@@ -1,3 +1,5 @@
+// import axios from "axios";
+
 class MarvelService {
   _apiBase = 'https://gateway.marvel.com:443/v1/public/';
   _apiKey = 'apikey=15662d93bc28bdbc738e3f2f1a54ee4e';
@@ -11,6 +13,14 @@ class MarvelService {
   
       return await res.json();
   }
+
+  // getResource = async (url) => {
+  //   try {
+  //     return await axios.get(url);
+  //   } catch (e) {
+  //     throw new Error(`Could not fetch ${url}, error: ${e}`);
+  //   }
+  // }
 
   getAllCharacters = async () => {
       const dataNormalize = await this.getResource(`${this._apiBase}characters?limit=9&offset=210&${this._apiKey}`);
