@@ -7,15 +7,19 @@ import './randomChar.scss';
 import mjolnir from '../../resources/img/mjolnir.png';
 
 class RandomChar extends Component {
-  constructor(props) {
-    super(props);
-    this.updateChar();
-  }
-
   state = {
     char: {},
     process: 'loading',
   };
+
+  componentDidMount() {
+    this.updateChar();
+    // this.timerId = setInterval(this.updateChar, 4000);
+  }
+
+  componentWillUnmount() {
+    // clearInterval(this.timerId);
+  }
 
   marvelService = new MarvelService();
 
@@ -78,7 +82,6 @@ class RandomChar extends Component {
 
 const View = ({ char }) => {
   const { name, description, thumbnail, homepage, wiki } = char;
-  console.log(name)
 
   return (
     <div className='randomchar__block'>
@@ -87,10 +90,10 @@ const View = ({ char }) => {
             <p className='randomchar__name'>{name}</p>
             <p className='randomchar__descr'>{description}</p>
             <div className='randomchar__btns'>
-              <a href={homepage} className='button button__main'>
+              <a href={homepage} className='button button__main' target='_blank' rel='noreferrer'>
                 <div className='inner'>homepage</div>
               </a>
-              <a href={wiki} className='button button__secondary'>
+              <a href={wiki} className='button button__secondary' target='_blank' rel='noreferrer'>
                 <div className='inner'>Wiki</div>
               </a>
             </div>
