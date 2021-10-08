@@ -83,9 +83,18 @@ class RandomChar extends Component {
 const View = ({ char }) => {
   const { name, description, thumbnail, homepage, wiki } = char;
 
+  const isAvailableTumbnail = thumbnail.indexOf('image_not_available') === -1;
+  const stylesThumbnail = {
+    'objectFit': isAvailableTumbnail ? 'cover' : 'contain',
+  };
+  // let imgStyle = {'objectFit' : 'cover'};
+  //   if (thumbnail === 'http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available.jpg') {
+  //       imgStyle = {'objectFit' : 'contain'};
+  //   }
+
   return (
     <div className='randomchar__block'>
-          <img src={thumbnail} alt='Random character' className='randomchar__img' />
+          <img src={thumbnail} alt='Random character' className='randomchar__img' style={stylesThumbnail}/>
           <div className='randomchar__info'>
             <p className='randomchar__name'>{name}</p>
             <p className='randomchar__descr'>{description}</p>
