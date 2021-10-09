@@ -38,7 +38,6 @@ class CharList extends Component {
   };
 
   getContent = (process, chars) => {
-    console.log(process);
     switch (process) {
       case 'loading':
         return <Spinner />;
@@ -51,15 +50,20 @@ class CharList extends Component {
     }
   }
 
+  handleSelectedChar = (id) => (e) => {
+    const { onSelectedChar } = this.props;
+    onSelectedChar(id);
+  };
+
   renderItems(chars) {
     const items = chars.map(({ name, thumbnail, id }) => {
       const isAvailableTumbnail = thumbnail.indexOf('image_not_available') === -1;
       const stylesThumbnail = {
-        objectFit: isAvailableTumbnail ? 'cover' : 'contain',
+        objectFit: isAvailableTumbnail ? 'cover' : 'unset',
       };
 
       return (
-        <li key={id} className='char__item'>
+        <li key={id} className='char__item' onClick={this.handleSelectedChar(id)} >
           <img src={thumbnail} alt={name} style={stylesThumbnail} />
           <div className='char__name'>{name}</div>
         </li>
