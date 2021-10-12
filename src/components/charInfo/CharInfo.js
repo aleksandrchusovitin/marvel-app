@@ -1,4 +1,6 @@
 import { Component } from 'react';
+import PropTypes from 'prop-types';
+
 import MarvelService from '../../services/MarvelService';
 import Spinner from '../spinner/Spinner';
 import ErrorMessage from '../errorMessage/ErrorMessage';
@@ -101,16 +103,9 @@ const View = ({ char }) => {
               return;
             }
 
-            const comicLink = comic.resourceURI;
             const comicName = comic.name;
 
-            return (
-              <li key={i} className='char__comics-item'>
-                <a href={comicLink} target='_blank' rel='noreferrer'>
-                  {comicName}
-                </a>
-              </li>
-            );
+            return <li key={i} className='char__comics-item'>{comicName}</li>;
           })}
         </ul>
       </>
@@ -137,6 +132,10 @@ const View = ({ char }) => {
       {renderComics()}
     </>
   );
+};
+
+CharInfo.propTypes = {
+  charId: PropTypes.number,
 };
 
 export default CharInfo;

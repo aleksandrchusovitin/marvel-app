@@ -1,4 +1,6 @@
 import { Component } from 'react';
+import PropTypes from 'prop-types';
+
 import MarvelService from '../../services/MarvelService';
 import Spinner from '../spinner/Spinner';
 import ErrorMessage from '../errorMessage/ErrorMessage';
@@ -9,26 +11,39 @@ class CharList extends Component {
   state = {
     chars: [],
     process: 'loading',
+    newCharsState: 'loading',
+    offset: 210,
   };
 
   marvelService = new MarvelService();
 
   componentDidMount() {
-    this.updateChars();
+    this.updateCharList();
   }
 
-  updateChars = () => {
+  updateCharList = (offset) => {
+    this.onCharListLoading();
     this.marvelService
-      .getAllCharacters()
+      .getAllCharacters(offset)
       .then(this.onCharsLoaded)
       .catch(this.onError);
+  }
+
+  handleMoreBtn = (offset) => (e) => {
+    this.updateCharList(offset);
   };
 
-  onCharsLoaded = (chars) => {
-      this.setState({
-      chars,
+  onCharListLoading = () => {
+    this.setState({ newCharsState: 'loading' });
+  };
+
+  onCharsLoaded = (newChars) => {
+    this.setState(({ chars, offset }) => ({
+      chars: [...chars, ...newChars],
       process: 'completed',
-    });
+      newCharsState: (newChars.length < 9) ? 'ended' : 'completed',
+      offset: offset + 9,
+    }));
   };
 
   onError = () => {
@@ -78,16 +93,25 @@ class CharList extends Component {
   }
 
   render() {
-    const { chars, process } = this.state;
+    const { chars, process, newCharsState, offset } = this.state;
     return (
       <div className='char__list'>
         {this.getContent(process, chars)}
-        <button className='button button__main button__long'>
+        <button 
+          className='button button__main button__long' 
+          onClick={this.handleMoreBtn(offset)}
+          disabled={newCharsState === 'loading'}
+          style={{ display: (newCharsState === 'ended') ? 'none' : 'block'  }}
+        >
           <div className='inner'>load more</div>
         </button>
       </div>
     );
   }
 }
+
+CharList.propTypes = {
+  onSelectedChar: PropTypes.func.isRequired,
+};
 
 export default CharList;

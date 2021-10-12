@@ -3,6 +3,7 @@ import axios from "axios";
 class MarvelService {
   _apiBase = 'https://gateway.marvel.com:443/v1/public/';
   _apiKey = 'apikey=15662d93bc28bdbc738e3f2f1a54ee4e';
+  _baseOffset = 210;
 
   // getResource = async (url) => {
   //     let res = await fetch(url);
@@ -22,8 +23,8 @@ class MarvelService {
     }
   }
 
-  getAllCharacters = async () => {
-      const dataNormalize = await this.getResource(`${this._apiBase}characters?limit=9&offset=210&${this._apiKey}`);
+  getAllCharacters = async (offset = this._baseOffset) => {
+      const dataNormalize = await this.getResource(`${this._apiBase}characters?limit=9&offset=${offset}&${this._apiKey}`);
       return dataNormalize.data.data.results.map(this._transformCharacter);
   }
 
