@@ -15,6 +15,12 @@ class CharList extends Component {
     offset: 210,
   };
 
+  itemRefs = [];
+
+  setRef = (ref) => {
+    this.itemRefs.push(ref);
+  };
+
   marvelService = new MarvelService();
 
   componentDidMount() {
@@ -68,6 +74,10 @@ class CharList extends Component {
   handleSelectedChar = (id) => (e) => {
     const { onSelectedChar } = this.props;
     onSelectedChar(id);
+
+    this.itemRefs.forEach((item) => item.classList.remove('char__item_selected'));
+    const currentRefChar = this.itemRefs.find((i) => i.id === `${id}`);
+    currentRefChar.classList.add('char__item_selected');
   };
 
   renderItems(chars) {
@@ -78,7 +88,7 @@ class CharList extends Component {
       };
 
       return (
-        <li key={id} className='char__item' onClick={this.handleSelectedChar(id)} >
+        <li id={id} ref={this.setRef} key={id} className='char__item' onClick={this.handleSelectedChar(id)} tabIndex="0" >
           <img src={thumbnail} alt={name} style={stylesThumbnail} />
           <div className='char__name'>{name}</div>
         </li>

@@ -22,6 +22,10 @@
         padding: 15px;
         cursor: pointer;
         transition: 0.3s transform;
+        &:hover,
+        &:focus {
+        transform: scale(1.1);
+        }
         img {
             width: 200px;
             height: 200px;
