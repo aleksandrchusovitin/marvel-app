@@ -1,4 +1,4 @@
-import { Component } from 'react';
+import { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 
 import MarvelService from '../../services/MarvelService';
@@ -8,58 +8,39 @@ import Skeleton from '../skeleton/Skeleton';
 
 import './charInfo.scss';
 
-class CharInfo extends Component {
-  state = {
-    char: {},
-    process: 'waiting',
-  };
+const CharInfo = ({ charId }) => {
+  const [char, setChar] = useState({});
+  const [process, setProcess] = useState('waiting');
 
-  componentDidMount() {
-    this.updateChar();
-  }
+  useEffect(() => {
+    updateChar();
+  }, [charId]);
 
-  componentDidUpdate(prevProps, prevState) {
-    const { charId } = this.props;
-    if (charId !== prevProps.charId) {
-      this.updateChar();
-    }
-  }
+  const marvelService = new MarvelService();
 
-  marvelService = new MarvelService();
-
-  updateChar = () => {
-    const { charId } = this.props;
+  const updateChar = () => {
     if (!charId) {
       return;
     }
 
-    this.onCharLoading();
-    this.marvelService
-      .getCharacter(charId)
-      .then(this.onCharLoaded)
-      .catch(this.onError);
+    onCharLoading();
+    marvelService.getCharacter(charId).then(onCharLoaded).catch(onError);
   };
 
-  onCharLoaded = (char) => {
-    this.setState({
-      char,
-      process: 'completed',
-    });
+  const onCharLoaded = (char) => {
+    setChar(char);
+    setProcess('completed');
   };
 
-  onCharLoading = () => {
-    this.setState({
-      process: 'loading',
-    });
+  const onCharLoading = () => {
+    setProcess('loading');
   };
 
-  onError = () => {
-    this.setState({
-      process: 'error',
-    });
+  const onError = () => {
+    setProcess('error');
   };
 
-  getContent = (process, char) => {
+  const getContent = (process, char) => {
     switch (process) {
       case 'waiting':
         return <Skeleton />;
@@ -74,11 +55,8 @@ class CharInfo extends Component {
     }
   };
 
-  render() {
-    const { process, char } = this.state;
-    return <div className='char__info'>{this.getContent(process, char)}</div>;
-  }
-}
+  return <div className='char__info'>{getContent(process, char)}</div>;
+};
 
 const View = ({ char }) => {
   const { name, description, thumbnail, homepage, wiki, comics } = char;
@@ -105,7 +83,11 @@ const View = ({ char }) => {
 
             const comicName = comic.name;
 
-            return <li key={i} className='char__comics-item'>{comicName}</li>;
+            return (
+              <li key={i} className='char__comics-item'>
+                {comicName}
+              </li>
+            );
           })}
         </ul>
       </>
