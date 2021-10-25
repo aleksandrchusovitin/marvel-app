@@ -83,6 +83,11 @@ const CharList = ({ onSelectedChar }) => {
           key={id}
           className='char__item'
           onClick={handleSelectedChar(id)}
+          onKeyPress={(e) => {
+            if (e.key === 'Enter') {
+              handleSelectedChar(id)(e);
+            }
+          }}
           tabIndex='0'
         >
           <img src={thumbnail} alt={name} style={stylesThumbnail} />
