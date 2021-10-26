@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 
-import MarvelService from '../../services/MarvelService';
+import useMarvelService from '../../services/MarvelService';
 import Spinner from '../spinner/Spinner';
 import ErrorMessage from '../errorMessage/ErrorMessage';
 
@@ -15,7 +15,7 @@ const CharList = ({ onSelectedChar }) => {
 
   const itemRefs = useRef([]);
 
-  const marvelService = new MarvelService();
+  const marvelService = useMarvelService();
 
   useEffect(() => {
     updateCharList();

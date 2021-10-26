@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import MarvelService from '../../services/MarvelService';
+import useMarvelService from '../../services/MarvelService';
 import Spinner from '../spinner/Spinner';
 import ErrorMessage from '../errorMessage/ErrorMessage';
 
@@ -8,7 +8,7 @@ import mjolnir from '../../resources/img/mjolnir.png';
 
 const RandomChar = () => {
   const [char, setChar] = useState({});
-  const [process, setProcess] = useState('loading');
+  const { process, getCharacter } = useMarvelService();
 
   useEffect(() => {
     updateChar();
@@ -19,32 +19,24 @@ const RandomChar = () => {
     }
   }, []);
 
-  const marvelService = new MarvelService();
-
   const onCharLoaded = (char) => {
+    console.log(char)
     setChar(char);
-    setProcess('completed');
-  };
-
-  const onCharLoading = () => {
-    setProcess('loading');
-  };
-
-  const onError = () => {
-    setProcess('error');
   };
 
   const updateChar = () => {
     const id = Math.floor(Math.random() * (1011400 - 1011000) + 1011000);
-    onCharLoading();
-    marvelService.getCharacter(id).then(onCharLoaded).catch(onError);
+    getCharacter(id).then(onCharLoaded);
   };
 
   const getContent = (process, char) => {
+    console.log(process, char);
     switch (process) {
+      case 'waiting':
       case 'loading':
         return <Spinner />;
-      case 'completed':
+      case 'completed' && char:
+        console.log(char);
         return <View char={char} />;
       case 'error':
         return <ErrorMessage />;
@@ -74,7 +66,7 @@ const RandomChar = () => {
 
 const View = ({ char }) => {
   const { name, description, thumbnail, homepage, wiki } = char;
-
+  
   const isAvailableTumbnail = thumbnail.indexOf('image_not_available') === -1;
   const stylesThumbnail = {
     objectFit: isAvailableTumbnail ? 'cover' : 'contain',
