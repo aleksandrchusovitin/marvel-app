@@ -9,46 +9,37 @@ import './charList.scss';
 
 const CharList = ({ onSelectedChar }) => {
   const [chars, setChars] = useState([]);
-  const [process, setProcess] = useState('loading');
   const [newCharsState, setNewCharsState] = useState('loading');
   const [offset, setOffset] = useState(210);
 
+  const { process, getAllCharacters } = useMarvelService();
+
   const itemRefs = useRef([]);
 
-  const marvelService = useMarvelService();
-
   useEffect(() => {
-    updateCharList();
+    updateCharList(offset, true);
   }, []);
 
-  const updateCharList = (offset) => {
-    onCharListLoading();
-    marvelService.getAllCharacters(offset).then(onCharsLoaded).catch(onError);
+  const updateCharList = (offset, initial) => {
+    initial ? setNewCharsState('waiting') : setNewCharsState('loading');
+    getAllCharacters(offset).then(onCharsLoaded);
   };
 
   const handleMoreBtn = (offset) => (e) => {
     updateCharList(offset);
   };
 
-  const onCharListLoading = () => {
-    setNewCharsState('loading');
-  };
-
   const onCharsLoaded = (newChars) => {
     setChars((chars) => [...chars, ...newChars]);
-    setProcess('completed');
     setNewCharsState(newChars.length < 9 ? 'ended' : 'completed');
     setOffset((offset) => offset + 9);
   };
 
-  const onError = () => {
-    setProcess('error');
-  };
-
   const getContent = (process, chars) => {
     switch (process) {
+      case 'waiting':
       case 'loading':
-        return <Spinner />;
+        return newCharsState === 'waiting' ? <Spinner /> : null;
       case 'completed':
         return renderItems(chars);
       case 'error':

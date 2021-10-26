@@ -20,7 +20,6 @@ const RandomChar = () => {
   }, []);
 
   const onCharLoaded = (char) => {
-    console.log(char)
     setChar(char);
   };
 
@@ -30,14 +29,12 @@ const RandomChar = () => {
   };
 
   const getContent = (process, char) => {
-    console.log(process, char);
     switch (process) {
       case 'waiting':
       case 'loading':
         return <Spinner />;
-      case 'completed' && char:
-        console.log(char);
-        return <View char={char} />;
+      case 'completed':
+        return char ? <View char={char} /> : null;
       case 'error':
         return <ErrorMessage />;
       default:
@@ -67,10 +64,14 @@ const RandomChar = () => {
 const View = ({ char }) => {
   const { name, description, thumbnail, homepage, wiki } = char;
   
-  const isAvailableTumbnail = thumbnail.indexOf('image_not_available') === -1;
-  const stylesThumbnail = {
-    objectFit: isAvailableTumbnail ? 'cover' : 'contain',
-  };
+  let stylesThumbnail;
+  if (thumbnail) {
+    const isAvailableTumbnail = thumbnail.indexOf('image_not_available') === -1;
+    stylesThumbnail = {
+      objectFit: isAvailableTumbnail ? 'cover' : 'contain',
+    };
+  }
+
   // let imgStyle = {'objectFit' : 'cover'};
   //   if (thumbnail === 'http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available.jpg') {
   //       imgStyle = {'objectFit' : 'contain'};
