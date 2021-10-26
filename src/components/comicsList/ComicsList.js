@@ -1,73 +1,84 @@
+import { useState, useEffect } from 'react';
+
+import useMarvelService from '../../services/MarvelService';
+import Spinner from '../spinner/Spinner';
+import ErrorMessage from '../errorMessage/ErrorMessage';
+
 import './comicsList.scss';
-import uw from '../../resources/img/UW.png';
-import xMen from '../../resources/img/x-men.png';
 
 const ComicsList = () => {
-    return (
-        <div className="comics__list">
-            <ul className="comics__grid">
-                <li className="comics__item">
-                    <a href="#">
-                        <img src={uw} alt="ultimate war" className="comics__item-img"/>
-                        <div className="comics__item-name">ULTIMATE X-MEN VOL. 5: ULTIMATE WAR TPB</div>
-                        <div className="comics__item-price">9.99$</div>
-                    </a>
-                </li>
-                <li className="comics__item">
-                    <a href="#">
-                        <img src={xMen} alt="x-men" className="comics__item-img"/>
-                        <div className="comics__item-name">X-Men: Days of Future Past</div>
-                        <div className="comics__item-price">NOT AVAILABLE</div>
-                    </a>
-                </li>
-                <li className="comics__item">
-                    <a href="#">
-                        <img src={uw} alt="ultimate war" className="comics__item-img"/>
-                        <div className="comics__item-name">ULTIMATE X-MEN VOL. 5: ULTIMATE WAR TPB</div>
-                        <div className="comics__item-price">9.99$</div>
-                    </a>
-                </li>
-                <li className="comics__item">
-                    <a href="#">
-                        <img src={xMen} alt="x-men" className="comics__item-img"/>
-                        <div className="comics__item-name">X-Men: Days of Future Past</div>
-                        <div className="comics__item-price">NOT AVAILABLE</div>
-                    </a>
-                </li>
-                <li className="comics__item">
-                    <a href="#">
-                        <img src={uw} alt="ultimate war" className="comics__item-img"/>
-                        <div className="comics__item-name">ULTIMATE X-MEN VOL. 5: ULTIMATE WAR TPB</div>
-                        <div className="comics__item-price">9.99$</div>
-                    </a>
-                </li>
-                <li className="comics__item">
-                    <a href="#">
-                        <img src={xMen} alt="x-men" className="comics__item-img"/>
-                        <div className="comics__item-name">X-Men: Days of Future Past</div>
-                        <div className="comics__item-price">NOT AVAILABLE</div>
-                    </a>
-                </li>
-                <li className="comics__item">
-                    <a href="#">
-                        <img src={uw} alt="ultimate war" className="comics__item-img"/>
-                        <div className="comics__item-name">ULTIMATE X-MEN VOL. 5: ULTIMATE WAR TPB</div>
-                        <div className="comics__item-price">9.99$</div>
-                    </a>
-                </li>
-                <li className="comics__item">
-                    <a href="#">
-                        <img src={xMen} alt="x-men" className="comics__item-img"/>
-                        <div className="comics__item-name">X-Men: Days of Future Past</div>
-                        <div className="comics__item-price">NOT AVAILABLE</div>
-                    </a>
-                </li>
-            </ul>
-            <button className="button button__main button__long">
-                <div className="inner">load more</div>
-            </button>
-        </div>
-    )
-}
+  const [comics, setComics] = useState([]);
+  const [newComicsState, setNewComicsState] = useState('loading');
+  const [offset, setOffset] = useState(0);
+
+  const { process, getAllComics } = useMarvelService();
+
+  useEffect(() => {
+    updateComicsList(offset, true);
+  }, []);
+
+  const updateComicsList = (offset, initial) => {
+    initial ? setNewComicsState('waiting') : setNewComicsState('loading');
+    getAllComics(offset).then(onComicsLoaded);
+  };
+
+  const handleMoreBtn = (offset) => (e) => {
+    updateComicsList(offset);
+  };
+
+  const onComicsLoaded = (newComics) => {
+    setComics((comics) => [...comics, ...newComics]);
+    setNewComicsState(newComics.length < 8 ? 'ended' : 'completed');
+    setOffset((offset) => offset + 8);
+  };
+
+  const getContent = (process) => {
+    switch (process) {
+      case 'waiting':
+      case 'loading':
+        return newComicsState === 'waiting' ? <Spinner /> : renderItems(comics);
+      case 'completed':
+        return renderItems(comics);
+      case 'error':
+        return <ErrorMessage />;
+      default:
+        throw new Error('Unexpected process state');
+    }
+  };
+
+  function renderItems(comics) {
+    const items = comics.map(({ id, title, price, thumbnail }, i) => {
+      const isAvailablethumbnail = thumbnail.indexOf('image_not_available') === -1;
+      const stylesThumbnail = {
+        objectFit: isAvailablethumbnail ? 'cover' : 'unset',
+      };
+
+      return (
+        <li id={id} key={i} className='comics__item' tabIndex='0'>
+          <a href='#'>
+            <img src={thumbnail} alt={title} className='comics__item-img' style={stylesThumbnail}/>
+            <div className='comics__item-name'>{title}</div>
+            <div className='comics__item-price'>{price}</div>
+          </a>
+        </li>
+      );
+    });
+
+    return <ul className='comics__grid'>{items}</ul>;
+  }
+  return (
+    <div className='comics__list'>
+      {getContent(process, comics)}
+      <button 
+        className='button button__main button__long' 
+        onClick={handleMoreBtn(offset)}
+        disabled={newComicsState === 'loading'}
+        style={{ display: newComicsState === 'ended' ? 'none' : 'block' }}
+      >
+        <div className='inner'>load more</div>
+      </button>
+    </div>
+  );
+};
 
 export default ComicsList;
