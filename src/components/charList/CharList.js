@@ -39,7 +39,7 @@ const CharList = ({ onSelectedChar }) => {
     switch (process) {
       case 'waiting':
       case 'loading':
-        return newCharsState === 'waiting' ? <Spinner /> : null;
+        return newCharsState === 'waiting' ? <Spinner /> : renderItems(chars);
       case 'completed':
         return renderItems(chars);
       case 'error':
