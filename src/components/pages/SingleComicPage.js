@@ -57,7 +57,10 @@ const View = ({ comic }) => {
         <div className='single-comic__price'>{price}</div>
       </div>
       <Link to='/comics' className='single-comic__back'>
-        Back to all
+        Back to all Comics
+      </Link>
+      <Link to='/' className='single-comic__back'>
+        Back to all Characters
       </Link>
     </div>
   );

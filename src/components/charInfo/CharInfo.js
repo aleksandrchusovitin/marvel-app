@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
+import { Link } from 'react-router-dom';
 
 import useMarvelService from '../../services/MarvelService';
 import Spinner from '../spinner/Spinner';
@@ -14,9 +15,8 @@ const CharInfo = ({ charId }) => {
 
   useEffect(() => {
     updateChar();
-      // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [charId]);
-
 
   const updateChar = () => {
     if (!charId) {
@@ -69,6 +69,7 @@ const View = ({ char }) => {
         <div className='char__comics'>Comics:</div>
         <ul className='char__comics-list'>
           {comics.map((comic, i) => {
+            const comicId = comic.resourceURI.slice(43);
             if (i > 9) {
               // eslint-disable-next-line
               return;
@@ -77,8 +78,8 @@ const View = ({ char }) => {
             const comicName = comic.name;
 
             return (
-              <li key={i} className='char__comics-item'>
-                {comicName}
+              <li key={comicId} className='char__comics-item'>
+                <Link to={`/comics/${comicId}`}>{comicName}</Link>
               </li>
             );
           })}
