@@ -14,6 +14,7 @@ const CharInfo = ({ charId }) => {
 
   useEffect(() => {
     updateChar();
+      // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [charId]);
 
 

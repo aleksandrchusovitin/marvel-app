@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 
 import useMarvelService from '../../services/MarvelService';
 import Spinner from '../spinner/Spinner';
@@ -15,6 +16,7 @@ const ComicsList = () => {
 
   useEffect(() => {
     updateComicsList(offset, true);
+      // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const updateComicsList = (offset, initial) => {
@@ -48,18 +50,24 @@ const ComicsList = () => {
 
   function renderItems(comics) {
     const items = comics.map(({ id, title, price, thumbnail }, i) => {
-      const isAvailablethumbnail = thumbnail.indexOf('image_not_available') === -1;
+      const isAvailablethumbnail =
+        thumbnail.indexOf('image_not_available') === -1;
       const stylesThumbnail = {
         objectFit: isAvailablethumbnail ? 'cover' : 'unset',
       };
 
       return (
         <li id={id} key={i} className='comics__item' tabIndex='0'>
-          <a href='#'>
-            <img src={thumbnail} alt={title} className='comics__item-img' style={stylesThumbnail}/>
+          <Link to={`/comics/${id}`}>
+            <img
+              src={thumbnail}
+              alt={title}
+              className='comics__item-img'
+              style={stylesThumbnail}
+            />
             <div className='comics__item-name'>{title}</div>
             <div className='comics__item-price'>{price}</div>
-          </a>
+          </Link>
         </li>
       );
     });
@@ -69,8 +77,8 @@ const ComicsList = () => {
   return (
     <div className='comics__list'>
       {getContent(process, comics)}
-      <button 
-        className='button button__main button__long' 
+      <button
+        className='button button__main button__long'
         onClick={handleMoreBtn(offset)}
         disabled={newComicsState === 'loading'}
         style={{ display: newComicsState === 'ended' ? 'none' : 'block' }}

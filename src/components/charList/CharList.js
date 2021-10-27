@@ -18,6 +18,7 @@ const CharList = ({ onSelectedChar }) => {
 
   useEffect(() => {
     updateCharList(offset, true);
+      // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const updateCharList = (offset, initial) => {
