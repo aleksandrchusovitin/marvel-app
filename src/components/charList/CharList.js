@@ -1,3 +1,5 @@
+import {CSSTransition, TransitionGroup} from 'react-transition-group';
+
 import { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 
@@ -69,26 +71,33 @@ const CharList = ({ onSelectedChar }) => {
       };
 
       return (
-        <li
-          id={id}
-          ref={(el) => (itemRefs.current[i] = el)}
-          key={id}
-          className='char__item'
-          onClick={handleSelectedChar(id)}
-          onKeyPress={(e) => {
-            if (e.key === 'Enter') {
-              handleSelectedChar(id)(e);
-            }
-          }}
-          tabIndex='0'
-        >
-          <img src={thumbnail} alt={name} style={stylesThumbnail} />
-          <div className='char__name'>{name}</div>
-        </li>
+        <CSSTransition key={id} timeout={500} classNames="char__item">
+          <li
+            id={id}
+            ref={(el) => (itemRefs.current[i] = el)}
+            className='char__item'
+            onClick={handleSelectedChar(id)}
+            onKeyPress={(e) => {
+              if (e.key === 'Enter') {
+                handleSelectedChar(id)(e);
+              }
+            }}
+            tabIndex='0'
+          >
+            <img src={thumbnail} alt={name} style={stylesThumbnail} />
+            <div className='char__name'>{name}</div>
+          </li>
+        </CSSTransition>
       );
     });
 
-    return <ul className='char__grid'>{items}</ul>;
+    return (
+      <ul className='char__grid'>
+        <TransitionGroup component={null}>
+          {items}
+        </TransitionGroup>
+      </ul>
+    );
   }
 
   return (
